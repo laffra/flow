@@ -1,0 +1,5 @@
+pandas
+fmpsdk
+duckdb
+matplotlib
+pyscript-ltk

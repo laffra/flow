@@ -1,0 +1,267 @@
+
+.ltk-button {
+    min-width: 0;
+}
+    
+body {
+    background-color: rgb(246, 246, 246);
+}
+
+.flow {
+    width: 100vw;
+    height: 100vh;
+
+
+   /* diameter of the circle */
+   --d: 2px; 
+   
+   background : radial-gradient(
+     circle at 
+        var(--d) 
+        var(--d), 
+        
+     #c7c7c7 calc(var(--d) - 1px), 
+     #7e7e7e00 var(--d)
+   ) 
+   0 0 / 25px 25px;
+}
+
+
+.node-view {
+    position: absolute;
+    border: 2px solid rgb(199, 199, 199);
+    border-radius: 10px;
+    padding: 8px 12px 8px 8px;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    background-color: white;
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+    z-index: 5000;
+}
+
+.node-view-progress {
+    background-color: transparent;
+    width: 100%;
+    height: 4px;
+}
+
+.node-view-error .node-view-progress {
+    background-color: red;
+}
+
+.leader-line {
+    z-index: 10000;
+}
+
+.node-view-connectors {
+    position: relative;
+    top: -12px;
+    width: 100%;
+}
+
+.connector-dot {
+    height: 6px;
+    line-height: 6px;
+}
+
+.matching-connector {
+    background-color: rgb(255, 217, 147);
+    animation: matching-background 1s infinite;
+}
+
+.node-view-inputs {
+    text-align: left;
+    overflow: hidden;
+}
+
+.node-view-outputs {
+    text-align: right;
+    overflow: hidden;
+}
+
+.node-view-input {
+    left: 8px;
+}
+
+.node-view-connector {
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    min-width: 80px;
+}
+
+.node-view-connector:hover {
+    border: 1px solid rgb(214, 191, 191);
+}
+
+.node-view-temporary {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.blink, .blink::before {
+  content: " ";
+  margin: 0 auto;
+  transition: all 0.3s;
+  font-weight: bold;
+}
+
+.blink::before {
+  animation: blinkmove 2s infinite;
+  position: absolute;
+  background-color: #f700ff
+}
+
+@keyframes blinkmove {
+  50%   {
+    transform: scale(2);
+    opacity: 0
+  }
+  100%   {
+    transform: scale(2);
+    opacity: 0
+  }
+}
+
+.node-view-running .node-view-progress {
+  animation: node-view-running 3s infinite;
+}
+@keyframes node-view-running{
+  0% {
+    width: 10%;
+    background: rgb(255, 0, 157);
+  }
+  50% {
+    width: 30%;
+    background: rgb(76, 0, 255);
+  }
+  100% {
+    width: 100%;
+    background: rgb(247, 5, 5);
+  }
+}
+
+.node-view-label {
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.node-view-editor {
+    display: block;
+    margin: 8px 0;
+    width: calc(100% - 10px);
+    height: 120px;
+    background-color: #ffffeb;
+}
+
+.node-view-content {
+    height: calc(100% - 87px);
+    overflow: hidden;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    position: relative;
+    top: -12px;
+}
+
+.node-view-preview {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+}
+
+.node-view-preview img {
+    width: 100%;
+}
+
+.node-view-running .node-view-preview {
+    opacity: 0.6;
+}
+
+.node-view-control {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: 14px;
+    min-width: 1px;
+    height: 22px;
+    font-size: 11px;
+    z-index: 4000;
+    text-align: center;
+    width: 24px;
+    padding: 0;
+}
+
+.node-view-run-time {
+    text-align: center;
+    width: 100%;
+    right: 78px;
+}
+
+.node-view:hover .node-view-toggle-button {
+    display: block;
+    right: 12px;
+    top: -8px;
+}
+
+.node-view:hover .node-view-run-button {
+    display: block;
+    left: -12px;
+    top: -8px;
+    color: green;
+}
+
+.node-view:hover .node-view-delete-button {
+    display: block;
+    right: -12px;
+    top: -8px;
+}
+
+.node-view .ltk-slider {
+    width: 140px;
+}
+
+.node-view-output {
+    width: 10px;
+    text-align: right;
+}
+
+.node-view-output:hover {
+    width: fit-content;
+}
+
+.node-view .ltk-input {
+    border: 1px solid gray;
+    width: 140px;
+}
+
+.node-view-value .ltk-text {
+    padding: 0;
+}
+
+.node-options {
+    background-color: white;
+    width: fit-content;
+}
+
+.node-option-category {
+    min-width: 0;
+    border: 1px solid lightgray;
+    text-align: center;
+    padding: 8px;
+    width: fit-content;
+}
+
+.node-option {
+    min-width: 0;
+    margin-bottom: 4px;
+}
+
+.matching-option {
+    border: 2px solid orange;
+    animation: matching-border 1s infinite;
+}
