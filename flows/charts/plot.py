@@ -11,24 +11,24 @@ import matplotlib.pyplot
 packages = ["pandas", "matplotlib", "plotly" ]
 
 
-def df_plot(df: pandas.DataFrame) -> matplotlib.pyplot.Figure:
+def dataframe_plot(dataframe: pandas.DataFrame) -> matplotlib.pyplot.Figure:
     """
     Pandas Dataframe => Plot
     """
-    return df.plot()
+    return dataframe.plot()
 
 
-def df_candlestick(df: pandas.DataFrame) -> matplotlib.pyplot.Figure:
+def df_candlestick(dataframe: pandas.DataFrame) -> matplotlib.pyplot.Figure:
     """
     Pandas Dataframe => Plot
     """
     import plotly
 
     chart = plotly.graph_objects.Candlestick(
-        x=df['date'],
-        open=df['open'],
-        high=df['high'],
-        low=df['low'],
-        close=df['close']
+        x=dataframe['date'],
+        open=dataframe['open'],
+        high=dataframe['high'],
+        low=dataframe['low'],
+        close=dataframe['close']
     )
     return plotly.graph_objects.Figure(data=[chart])
