@@ -2,4 +2,5 @@ pandas
 fmpsdk
 duckdb
 matplotlib
+plotly
 pyscript-ltk
