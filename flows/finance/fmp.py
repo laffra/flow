@@ -14,7 +14,8 @@ packages = [ "fmpsdk", "plotly" ]
 secrets = [
     (
         "FMPSDK",
-        "Please enter your Financial Modeling Prep SDK API key",
+        "This node uses Financial Modeling Prep (FMP). " \
+            "Please enter your FMP API key.",
         "https://site.financialmodelingprep.com/developer/docs/dashboard",
     ),
 ]
