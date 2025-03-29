@@ -43,7 +43,7 @@ class ConnectionView():
                 .css("left", self.start.offset().left)
                 .css("top", self.start.offset().top)
                 .append(
-                    ltk.Text("●")
+                    ltk.Text("⚬")
                         .addClass("connector-dot")
                 )
                 .appendTo(ltk.find(".flow"))
@@ -149,7 +149,7 @@ class ConnectionView():
         node.NodeView.set_input(self.end.attr("key"), self.end.attr("name"), self)
 
 
-class Connector(ltk.Div):
+class Connector(ltk.HBox):
     """
     Represents an input/output connector in a node view.
     """
@@ -163,7 +163,7 @@ class Connector(ltk.Div):
         self.attr("name", name)
         self.attr("type_name", type_name)
         nodes = [
-            ltk.Text("●")
+            ltk.Text("⚬")
                 .addClass("connector-dot"),
             ltk.Text(name)
                 .addClass("connector-label"),
