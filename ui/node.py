@@ -7,8 +7,8 @@ Represents a Node in the flow.
 import time
 
 import ltk
-
 from ui import connection
+
 
 class Node(ltk.Model):
     """
@@ -46,7 +46,6 @@ class Node(ltk.Model):
 
     def get_script(self):
         """ Get the imports, script, and inputs for the node. """
-        print("get_script", self.imports)
         imports = [
             f"import {module}" for module in self.imports
         ]
@@ -68,12 +67,13 @@ class Node(ltk.Model):
 
     def evaluate(self):
         """ Evaluate the node. """
+        if len(self.connections) < len(self.inputs):
+            return
         try:
             script = self.get_script()
         except Exception: # pylint: disable=broad-exception-caught
             return False
-        print("Evaluate", self.name, self.key)
-        ltk.publish("Flow", "Worker", "run", [self.key, script, {}])
+        ltk.publish("Flow", "Worker", "run", [self.key, script])
         return True
 
     def save(self):
@@ -95,6 +95,9 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
             ltk.Button("▶", self.run)
                 .addClass("node-view-control")
                 .addClass("node-view-run-button"),
+            ltk.Button("✏️", self.edit)
+                .addClass("node-view-control")
+                .addClass("node-view-edit-button"),
             ltk.Button("❌", self.delete)
                 .addClass("node-view-control")
                 .addClass("node-view-delete-button"),
@@ -105,7 +108,7 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
                 ltk.Div()
                     .addClass("node-view-inputs"),
                 ltk.Div()
-                    .css("flex-grow", "1"),
+                    .addClass("node-view-spacer"),
                 ltk.Div()
                     .addClass("node-view-outputs"),
             ).addClass("node-view-connectors"),
@@ -147,6 +150,7 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
         self.on("resize", ltk.proxy(lambda ui, event: self.resize()))
 
         self.start_time = time.time()
+        ltk.schedule(self.adjust_size, "adjust_size")
 
     def save_script(self):
         """ Save the script to the model """
@@ -170,6 +174,10 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
     def run(self, _event=None):
         """ Run this node """
         self.evaluate()
+
+    def edit(self, _event):
+        """ Edit this node """
+        self.find(".node-view-editor").addClass("node-view-editor-active")
 
     def delete(self, _event):
         """ Delete this node """
@@ -214,6 +222,18 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
             )
         if not self.model.inputs:
             self.find(".node-view-progress").remove()
+    
+    def adjust_size(self):
+        """ Adjust the size of the node """
+        self.css("width", sum([
+            self.find(".node-view-inputs").width(),
+            self.find(".node-view-outputs").width(),
+            50,
+        ]))
+        print("set width",
+            self.find(".node-view-inputs").width(),
+            self.find(".node-view-outputs").width(),
+        )
 
     def start_running(self):
         """ Start the running node """
@@ -246,11 +266,12 @@ class NodeView(ltk.Div): # pylint: disable=too-many-public-methods
         if result.get("error"):
             ltk.find(f"#{key}").addClass("node-view-error")
             preview = f"Error: <pre>{result['error']}</pre>"
-        ltk.find(f"#{key}").find(".node-view-preview").empty().append(
-            ltk.create(preview).element
-            if model.preview.startswith("<") else
-            ltk.Preformatted(preview).element
-        )
+        if preview.startswith("<"):
+            node.find(".node-view-preview").empty().append(
+                ltk.create(preview)
+            )
+        else:
+            node.find(".node-view-label").text(preview)
         if not result.get("error"):
             for line in flow.connections:
                 if line.start_key == key:
