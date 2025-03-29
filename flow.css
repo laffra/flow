@@ -35,7 +35,7 @@ body {
     box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
     background-color: white;
     cursor: pointer;
-    width: fit-content;
+    width: 350px;
     height: fit-content;
     z-index: 5000;
 }
@@ -56,17 +56,29 @@ body {
 
 .node-view-connectors {
     position: relative;
-    top: -12px;
-    width: 100%;
+    left: -18px;
+    width: calc(100% + 39px);
 }
 
 .connector-dot {
-    height: 6px;
-    line-height: 6px;
+    font-size: 24px;
+    line-height: 21px;
+}
+
+.connector-label {
+    visibility: hidden;
+}
+
+.node-view:hover .connector-label {
+    visibility: visible;
+}
+
+.matching-connector .connector-label {
+    visibility: visible;
 }
 
 .matching-connector {
-    background-color: rgb(255, 217, 147);
+    background-color: rgb(255, 235, 199);
     animation: matching-background 1s infinite;
 }
 
@@ -87,8 +99,7 @@ body {
 .node-view-connector {
     cursor: pointer;
     border: 1px solid transparent;
-    border-radius: 4px;
-    min-width: 80px;
+    border-radius: 6px;
 }
 
 .node-view-connector:hover {
@@ -145,27 +156,39 @@ body {
 }
 
 .node-view-label {
+    position: absolute;
+    top: 6px;
     text-align: center;
-    width: 100%;
+    width: calc(100% - 20px);
+    height: 24px;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: blue;
+}
+
+.node-view:hover .node-view-label {
+    visibility: hidden;
+}
+
+.node-view-spacer {
+    flex-grow: 1;
 }
 
 .node-view-editor {
-    display: block;
-    margin: 8px 0;
-    width: calc(100% - 10px);
-    height: 120px;
+    display: none;
+    width: calc(100% - 6px);
+    min-height: 120px;
+    height: calc(100% - 27px);
     background-color: #ffffeb;
+}
+
+.node-view-editor-active {
+    display: block;
 }
 
 .node-view-content {
     height: calc(100% - 87px);
     overflow: hidden;
-    overflow-x: scroll;
-    overflow-y: scroll;
-    position: relative;
-    top: -12px;
 }
 
 .node-view-preview {
@@ -221,12 +244,17 @@ body {
     top: -8px;
 }
 
+.node-view:hover .node-view-edit-button {
+    display: block;
+    right: 16px;
+    top: -8px;
+}
+
 .node-view .ltk-slider {
     width: 140px;
 }
 
 .node-view-output {
-    width: 10px;
     text-align: right;
 }
 
@@ -236,7 +264,6 @@ body {
 
 .node-view .ltk-input {
     border: 1px solid gray;
-    width: 140px;
 }
 
 .node-view-value .ltk-text {
@@ -264,4 +291,33 @@ body {
 .matching-option {
     border: 2px solid orange;
     animation: matching-border 1s infinite;
+}
+
+.dialog-buttons {
+    margin-top: 16px;
+    gap: 16px;
+}
+
+.ui-dialog {
+    z-index: 100000;
+}
+
+.ui-dialog .ltk-input {
+    margin: 8px 0;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+    background-color: #333333;
+    color: white;
+    font-weight: bold;
+}
+
+.ui-dialog .ui-dialog-content {
+    padding: 16px 8px;
+}
+
+.dialog-error::placeholder {
+  font-weight: bold;
+  opacity: 0.5;
+  color: red;
 }
