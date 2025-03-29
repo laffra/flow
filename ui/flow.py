@@ -40,7 +40,6 @@ class Flow(ltk.Model):  # pylint: disable=too-many-instance-attributes
         self.updated_timestamp = updated_timestamp
         self.packages = packages
         self.new = new
-        print("Create flow", [type(connection) for connection in self.connections])
 
     def add_connection(self, new_connection):
         """
@@ -133,7 +132,6 @@ class FlowView():
     def create_node(self, category="", packages="", imports=None, script="", name="",
                             secrets=None, output="", output_type="", inputs=None, **kwargs):
         """ Create a new node """
-        print("create_node", inputs)
         model = node.Node(
             key=f"{name}_{len(node.NodeView.nodes)}",
             flow=self.model, category=category, name=name,
@@ -146,17 +144,53 @@ class FlowView():
         view.appendTo(ltk.find(".flow"))
         return view
 
+    def ask_secret(self, key, message, url):
+        """ Ask the user for a secret """
+        def close(event, save=False):
+            dialog = ltk.find(event.target).closest(".ui-dialog")
+            if save:
+                secret = dialog.find(".ltk-input").val()
+                if secret:
+                    ltk.window.localStorage.setItem(key, secret)
+                else:
+                    dialog.find(".ltk-input") \
+                        .attr("placeholder", f"Please enter your {key} secret") \
+                        .addClass("dialog-error") \
+                        .focus()
+                    return
+            dialog.remove()
+
+        ltk.VBox(
+            ltk.Text(message),
+            ltk.Input("").on(
+                "change",
+            ),
+            ltk.Text("""
+                <p>
+                <b>Privacy Disclaimer:</b> 
+                Flow stores the secret into your browser's localStorage.
+                The secret is only used to authenticate with the API.
+                The secret is not saved anywhere else and is not shared with anyone.
+                </p>
+            """),
+            ltk.Text(f"For more information on {key}, see:"),
+            ltk.Link(url, url.replace("https://", "")),
+            ltk.HBox(
+                ltk.Button("Cancel", close),
+                ltk.Button("Save", lambda event: close(event, True))
+            ).addClass("dialog-buttons"),
+        ).dialog(ltk.to_js({
+            "title": f"Enter a secret for {key}",
+            "width": 500,
+            "modal": True,
+        }))
+
     def check_secrets(self, secrets):
         """ Check if any secrets need to be entered """
-        for key, prompt, url in secrets:
+        for key, message, url in secrets:
             self.secrets[key] = url
             if not ltk.window.localStorage.getItem(key):
-                ltk.window.localStorage.setItem(
-                    key,
-                    ltk.window.prompt(
-                        f"{prompt}. See {url} for more information."
-                    )
-                )
+                self.ask_secret(key, message, url)
 
     def create_option(self, parent,
             category="", name="", packages=None, imports=None, inputs=None,
@@ -188,7 +222,8 @@ def handle_error(data):
 
 def handle_result(data):
     """ Worker ran a node """
-    key, preview = ltk.to_py(data)
+    key = data[0]
+    preview = data[1]
     flow_node = node.NodeView.nodes[key]
     flow_node.handle_worker_result(flow.model, {
         "key": key,
@@ -214,7 +249,9 @@ def setup_worker():
         "packages": [ 
             "pandas", "duckdb", "matplotlib", "plotly", "fmpsdk",
         ],
-        "files": { },
+        "files": { 
+            "worker/preview.py": "worker/preview.py",
+        },
     }
     worker = XWorker("worker/runner.py", config=ltk.to_js(config), service_worker=True, type="pyodide")
     ltk.register_worker("pyodide-runner", worker)
