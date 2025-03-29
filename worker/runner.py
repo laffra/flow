@@ -10,17 +10,21 @@ import json
 import time
 
 import polyscript # pylint: disable=import-error
+from worker import preview
 
 state = {}
 state.update(globals())
 state.update({
-    "print": lambda *args: publish("print", " ".join(map(str, args)))
+    "print": lambda *args: (
+        publish("print", " ".join(map(str, args))),
+        print(*args)
+    )
 })
 
 class Runner():
     """ Runner class for running Python code. """
 
-    def __init__(self, key, script, inputs):
+    def __init__(self, key, script):
         """ Runs the script. """
         self.start = time.time()
         self.key = key
@@ -28,13 +32,12 @@ class Runner():
         print(script)
         print("="*30)
         self.script = self.intercept_last_expression(key, script)
-        self.inputs = inputs
 
     def run(self):
         """ Runs the script. """
         try:
             exec(self.script, state, state) # pylint: disable=exec-used
-            publish("result", [self.key, str(state[self.key])])
+            publish("result", [self.key, preview.create_preview(state[self.key])])
         except Exception as e: # pylint: disable=broad-exception-caught
             lineno = e.__traceback__.tb_lineno
             publish("error", [self.key, f"Line {lineno}, {type(e).__name__}: {e}"])
