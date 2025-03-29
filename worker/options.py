@@ -36,7 +36,6 @@ def get_type_name(annotation):
     Get the name of the type of a node.
     """
     if callable(annotation):
-        print("Callable", annotation)
         return annotation.__name__
     return str(annotation)
 
@@ -61,12 +60,10 @@ def setup():
     for name, module in flows.__dict__.items():
         if hasattr(module, "__file__"):
             if module.__file__:
-                print("module", module.__file__)
                 packages = []
                 imports = load_imports(module.__file__)
                 secrets = []
                 category = module.__name__.split(".")[-2]
-                print("Parse ", category, [key for key in module.__dict__.keys() if not key.startswith("__")])
                 for function_name, function in module.__dict__.items():
                     if function_name == "packages":
                         packages = function
